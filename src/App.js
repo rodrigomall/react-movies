@@ -5,7 +5,6 @@ import './App.css';
 const MOVIE_API = process.env.REACT_APP_API_URL;
 const SEARCH_API = process.env.REACT_APP_API_SEARCH;
 
-
 function App() {
   const [movies, setMovies] = useState([]);
   const [search, setSearch] = useState('');
