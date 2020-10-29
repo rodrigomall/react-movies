@@ -1,25 +1,55 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import Movie from './components/Movie';
 import './App.css';
 
+const MOVIE_API = process.env.REACT_APP_API_URL;
+const SEARCH_API = process.env.REACT_APP_API_SEARCH;
+
+
 function App() {
+  const [movies, setMovies] = useState([]);
+  const [search, setSearch] = useState('');
+
+  const getMovies = (API) => {
+    fetch(API)
+      .then((res)=> res.json())
+      .then((data)=> {
+        setMovies(data.results);
+      });
+  }
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    if(search) {
+      getMovies(SEARCH_API + search);
+      setSearch('');
+    }
+  }
+
+  const onClickSearch = (e) => {
+    setSearch(e.target.value);
+  }
+
+  useEffect(()=> {
+    getMovies(MOVIE_API);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <>
+      <header>
+        <form onSubmit={onSubmit}>
+          <input onChange={onClickSearch} value={search}
+            className='search' type='search'
+          placeholder='search...' />
+        </form>
       </header>
-    </div>
+      <div className='movie-container'>
+        { movies.length > 0 && movies.map(m => (
+            <Movie key={m.id} {...m}  />
+          ))
+        }
+      </div>
+    </>
   );
 }
 
